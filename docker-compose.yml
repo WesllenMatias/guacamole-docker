@@ -1,0 +1,32 @@
+version: "2"
+services:
+  db_guacamole:
+    image: "mariadb"
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    container_name: mariadb_guacamole
+    environment:
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_usr
+      MYSQL_PASSWORD: suasenha
+      MYSQL_ROOT_PASSWORD: suasenha
+    volumes:
+      - ./db:/var/lib/mysql
+    restart: always
+    ports:
+     - "3306:3306"
+  guacamole:
+    image: oznu/guacamole
+    container_name: guacamole
+    volumes:
+      - ./config:/config
+    environment:
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_usr
+      MYSQL_PASSWORD: suasenha
+    depends_on: 
+      - db_guacamole
+    ports:
+      - 9001:8080
+volumes:
+  postgres:
+    driver: local
